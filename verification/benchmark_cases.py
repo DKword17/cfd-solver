@@ -6,10 +6,10 @@ verification/benchmark_cases.py
 Comprehensive benchmark test suite for the 2D incompressible
 Navier-Stokes solver.
 
-Versuch A — Lid-driven cavity flow             (Ghia et al. 1982)
-Versuch B — Poiseuille (channel) flow          (analytische Lösung)
-Versuch C — Backward-facing step               (Armaly et al. 1983)
-Versuch D — Zylinderumströmung / cylinder flow (Re=40, 200)
+Versuch A 闁?Lid-driven cavity flow             (Ghia et al. 1982)
+Versuch B 闁?Poiseuille (channel) flow          (analytische L閺嬫ung)
+Versuch C 闁?Backward-facing step               (Armaly et al. 1983)
+Versuch D 闁?Zylinderumstr閺嬫ung / cylinder flow (Re=40, 200)
 
 Each *Versuch* (experiment) is fully self-contained: it sets up the
 mesh, boundary conditions, runs the solver, computes error metrics,
@@ -19,13 +19,13 @@ References
 ----------
 - Ghia, U., Ghia, K. N., & Shin, C. T. (1982). High-Re solutions for
   incompressible flow using the Navier-Stokes equations and a multigrid
-  method. *J. Comp. Phys.*, 48(3):387–411.
-- Armaly, B. F., Durst, F., Pereira, J. C. F., & Schönung, B. (1983).
+  method. *J. Comp. Phys.*, 48(3):387闁?11.
+- Armaly, B. F., Durst, F., Pereira, J. C. F., & Sch閺嬫ung, B. (1983).
   Experimental and theoretical investigation of backward-facing step
-  flow. *J. Fluid Mech.*, 127:473–496.
+  flow. *J. Fluid Mech.*, 127:473闁?96.
 
 Author: Heinrich Vogel
-        TU München, Lehrstuhl für Numerische Strömungsmechanik
+        TU M閻《chen, Lehrstuhl f閻『 Numerische Str閺嬫ungsmechanik
 Date:   2026-07-27
 """
 
@@ -50,25 +50,25 @@ from navier_stokes import (
 )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Gemeinsame Konstanten ─────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Gemeinsame Konstanten 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-RHO: Final[float] = 1.0         # Dichte [kg/m³]
-T_END_CAVITY: Final[float] = 20.0   # Endzeit für cavity [s]
+RHO: Final[float] = 1.0         # Dichte [kg/m妞翠箽
+T_END_CAVITY: Final[float] = 20.0   # Endzeit f閻『 cavity [s]
 DT_CAVITY: Final[float] = 0.01      # Zeitschritt [s]
-NX_CAVITY: Final[int] = 64          # Gitterzellen x
-NY_CAVITY: Final[int] = 64          # Gitterzellen y
+NX_CAVITY: Final[int] = 64          # Cells x
+NY_CAVITY: Final[int] = 64          # Cells y
 
 T_END_POISEUILLE: Final[float] = 5.0
 DT_POISEUILLE: Final[float] = 0.005
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Versuch A: Lid-driven Cavity ─────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Versuch A: Lid-driven Cavity 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-# Reference data from Ghia et al. (1982), Tables 1–3.
-# u‑velocity along vertical centerline (x=0.5)
+# Reference data from Ghia et al. (1982), Tables 1闁?.
+# u闁炽儲鍞篹locity along vertical centerline (x=0.5)
 
 # Re = 100
 CAVITY_RE100_Y: Final[list[float]] = [
@@ -100,7 +100,7 @@ CAVITY_RE1000_U: Final[list[float]] = [
     -0.30071, -0.38265, -0.32731, -0.27669, -0.24715, -0.23689, -0.21999, 0.00000,
 ]
 
-# v‑velocity along horizontal centerline (y=0.5) from Ghia et al.
+# v闁炽儲鍞篹locity along horizontal centerline (y=0.5) from Ghia et al.
 CAVITY_RE100_X: Final[list[float]] = [
     0.00000, 0.06250, 0.07031, 0.10156, 0.17188, 0.28125,
     0.50000, 0.73438, 0.85156, 0.95313, 0.96094, 0.96875, 0.97656, 1.00000,
@@ -129,11 +129,11 @@ CAVITY_RE1000_V: Final[list[float]] = [
 ]
 
 
-# ─── Daten für einen einzelnen Cavity-Datensatz ───────────────────────
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Daten f閻『 einen einzelnen Cavity-Datensatz 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
 
 @dataclass
 class CavityReferenz:
-    """Referenzdaten für die Cavity-Strömung bei einer Reynoldszahl."""
+    """Referenzdaten f閻『 die Cavity-Str閺嬫ung bei einer Reynoldszahl."""
     Reynoldszahl: int
     y_werte: list[float]
     u_referenz: list[float]
@@ -151,16 +151,16 @@ CAVITY_REFERENZEN: Final[list[CavityReferenz]] = [
 ]
 
 
-# ─── Numerische Cavity-Lösung ─────────────────────────────────────────
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Numerische Cavity-L閺嬫ung 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
 
-def cavity_loesen(
+def solve_cavity(
     Re: float,
     nx: int = NX_CAVITY,
     ny: int = NY_CAVITY,
     t_end: float = T_END_CAVITY,
     dt: float = DT_CAVITY,
 ) -> SIMPLESolver:
-    """Solve the lid‑driven cavity problem at given Re.
+    """Solve the lid闁炽儲鍚€riven cavity problem at given Re.
 
     Parameters
     ----------
@@ -194,17 +194,17 @@ def cavity_loesen(
     return solver
 
 
-# ─── Fehlerauswertung Cavity ──────────────────────────────────────────
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Error evaluation Cavity 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
 
 @dataclass
 class CavityErgebnis:
     """Ergebnisse eines einzelnen Cavity-Benchmark-Laufs."""
     Reynoldszahl: int
-    fehler_u_max: float
-    fehler_u_mittel: float
-    fehler_v_max: float
-    fehler_v_mittel: float
-    bestanden: bool
+    error_u_max: float
+    error_u_mean: float
+    error_v_max: float
+    error_v_mean: float
+    passed: bool
 
 
 def cavity_auswerten(
@@ -214,7 +214,7 @@ def cavity_auswerten(
 ) -> CavityErgebnis:
     """Compare solver cavity solution against Ghia reference data.
 
-    Interpolates the numerical solution onto the reference y‑locations
+    Interpolates the numerical solution onto the reference y闁炽儲鍞╫cations
     (centreline x = 0.5) and computes relative errors.
 
     Parameters
@@ -233,7 +233,7 @@ def cavity_auswerten(
     ny: int = solver.mesh.ny
     j_mitte: int = ny // 2
 
-    # u(y) at x = 0.5 → centreline index
+    # u(y) at x = 0.5 闁?centreline index
     i_mitte: int = solver.mesh.nx // 2
     u_zentrallinie: np.ndarray = solver.u.data[i_mitte, :]
     v_zentrallinie: np.ndarray = solver.v.data[i_mitte, :]
@@ -250,64 +250,64 @@ def cavity_auswerten(
     x_ref: np.ndarray = np.array(referenz.x_werte)
     v_ref: np.ndarray = np.array(referenz.v_referenz)
 
-    # Relative errors (L2‑norm along centreline)
+    # Relative errors (L2闁炽儲鍞玱rm along centreline)
     u_interp: np.ndarray = np.interp(y_ref, y_num, u_zentrallinie)
     v_interp: np.ndarray = np.interp(x_ref, x_num, v_horizontal)
 
     u_max_ref: float = float(np.max(np.abs(u_ref)))
     v_max_ref: float = float(np.max(np.abs(v_ref)))
 
-    fehler_u: np.ndarray = np.abs(u_interp - u_ref) / (u_max_ref + 1.0e-30)
-    fehler_v: np.ndarray = np.abs(v_interp - v_ref) / (v_max_ref + 1.0e-30)
+    error_u: np.ndarray = np.abs(u_interp - u_ref) / (u_max_ref + 1.0e-30)
+    error_v: np.ndarray = np.abs(v_interp - v_ref) / (v_max_ref + 1.0e-30)
 
-    fehler_u_max: float = float(np.max(fehler_u))
-    fehler_u_mittel: float = float(np.mean(fehler_u))
-    fehler_v_max: float = float(np.max(fehler_v))
-    fehler_v_mittel: float = float(np.mean(fehler_v))
+    error_u_max: float = float(np.max(error_u))
+    error_u_mean: float = float(np.mean(error_u))
+    error_v_max: float = float(np.max(error_v))
+    error_v_mean: float = float(np.mean(error_v))
 
-    bestanden: bool = (fehler_u_mittel < toleranz and fehler_v_mittel < toleranz)
+    passed: bool = (error_u_mean < toleranz and error_v_mean < toleranz)
 
     return CavityErgebnis(
         Reynoldszahl=referenz.Reynoldszahl,
-        fehler_u_max=fehler_u_max,
-        fehler_u_mittel=fehler_u_mittel,
-        fehler_v_max=fehler_v_max,
-        fehler_v_mittel=fehler_v_mittel,
-        bestanden=bestanden,
+        error_u_max=error_u_max,
+        error_u_mean=error_u_mean,
+        error_v_max=error_v_max,
+        error_v_mean=error_v_mean,
+        passed=passed,
     )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Versuch B: Poiseuille-Strömung (Kanalströmung) ──────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Versuch B: Poiseuille-Str閺嬫ung (Kanalstr閺嬫ung) 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 @dataclass
 class PoiseuilleErgebnis:
-    """Abweichung von der analytischen Poiseuille-Lösung."""
-    L1_fehler: float
-    L2_fehler: float
-    Linf_fehler: float
+    """deviation von der analytischen Poiseuille-L閺嬫ung."""
+    L1_error: float
+    L2_error: float
+    Linf_error: float
     maximalgeschwindigkeit_num: float
     maximalgeschwindigkeit_exakt: float
-    bestanden: bool
+    passed: bool
 
 
 def poiseuille_analytisch(y: np.ndarray, H: float, dpdx: float,
                            mu: float) -> np.ndarray:
     """Analytical Poiseuille velocity profile.
 
-    u(y) = (1 / (2μ)) · (-dp/dx) · y · (H - y)
+    u(y) = (1 / (2濞?) 鐠?(-dp/dx) 鐠?y 鐠?(H - y)
 
     Parameters
     ----------
     y : np.ndarray
-        Wall‑normal coordinate array.
+        Wall闁炽儲鍞玱rmal coordinate array.
     H : float
         Channel height.
     dpdx : float
         Pressure gradient (negative for forward flow).
     mu : float
-        Dynamic viscosity μ = ν · ρ.
+        Dynamic viscosity 濞?= 鐠?鐠?閿?
 
     Returns
     -------
@@ -317,7 +317,7 @@ def poiseuille_analytisch(y: np.ndarray, H: float, dpdx: float,
     return (1.0 / (2.0 * mu)) * (-dpdx) * y * (H - y)
 
 
-def poiseuille_loesen(
+def solve_poiseuille(
     nx: int = 48,
     ny: int = 48,
     Re: float = 50.0,
@@ -328,10 +328,10 @@ def poiseuille_loesen(
 
     Boundary conditions:
         West (inlet):   u = U_einlass (parabolic profile)
-        East (outlet):  zero‑gradient
-        North/South:    no‑slip walls
+        East (outlet):  zero闁炽儲鍚噐adient
+        North/South:    no闁炽儲鍞秎ip walls
 
-    The analytical solution assumes fully‑developed laminar flow with
+    The analytical solution assumes fully闁炽儲鍚€eveloped laminar flow with
     a parabolic profile.  The numerical solution should converge to the
     same profile.
 
@@ -356,7 +356,7 @@ def poiseuille_loesen(
     dpdx: float = -2.0 * Re * U_max / (H ** 2)  # Forcing pressure gradient
 
     # Analytical profile at any x
-    mu: float = (1.0 / Re) * RHO  # μ = ν · ρ
+    mu: float = (1.0 / Re) * RHO  # 濞?= 鐠?鐠?閿?
 
     mesh: Mesh2D = Mesh2D(nx, ny, lx=L, ly=H)
 
@@ -382,45 +382,45 @@ def poiseuille_loesen(
     for _step in range(n_steps):
         solver.step(n_inner=20)
 
-    # Compare at outlet cross‑section (i = nx-2, one cell before outlet BC)
+    # Compare at outlet cross闁炽儲鍞秂ction (i = nx-2, one cell before outlet BC)
     u_num: np.ndarray = solver.u.data[-2, :]
     u_exakt: np.ndarray = poiseuille_analytisch(mesh.yc, H, dpdx, mu)
 
-    fehler: np.ndarray = u_num - u_exakt
-    L1: float = float(np.mean(np.abs(fehler)))
-    L2: float = float(np.sqrt(np.mean(fehler ** 2)))
-    Linf: float = float(np.max(np.abs(fehler)))
+    error: np.ndarray = u_num - u_exakt
+    L1: float = float(np.mean(np.abs(error)))
+    L2: float = float(np.sqrt(np.mean(error ** 2)))
+    Linf: float = float(np.max(np.abs(error)))
     u_max_num: float = float(np.max(u_num))
     u_max_exakt: float = float(np.max(u_exakt))
 
-    bestanden: bool = L1 < 0.05
+    passed: bool = L1 < 0.05
 
     return solver, PoiseuilleErgebnis(
-        L1_fehler=L1,
-        L2_fehler=L2,
-        Linf_fehler=Linf,
+        L1_error=L1,
+        L2_error=L2,
+        Linf_error=Linf,
         maximalgeschwindigkeit_num=u_max_num,
         maximalgeschwindigkeit_exakt=u_max_exakt,
-        bestanden=bestanden,
+        passed=passed,
     )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Versuch C: Backward-Facing Step ──────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Versuch C: Backward-Facing Step 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 @dataclass
 class StufenErgebnis:
-    """Ergebnisse des Rückwärtsstufen-Benchmarks."""
+    """Ergebnisse des R閻々kw閻╃灗tsstufen-Benchmarks."""
     Reynoldszahl: float
     wiederanlegelaenge_num: float
     wiederanlegelaenge_ref: float
-    abweichung_prozent: float
-    bestanden: bool
+    deviation_prozent: float
+    passed: bool
 
 
 # Reference reattachment lengths from Armaly et al. (1983), Fig. 12
-# Non‑dimensionalised by step height h
+# Non闁炽儲鍚€imensionalised by step height h
 STUFEN_REFERENZ: Final[dict[int, float]] = {
     100: 3.0,
     200: 5.0,
@@ -430,7 +430,7 @@ STUFEN_REFERENZ: Final[dict[int, float]] = {
 }
 
 
-def stufen_loesen(
+def solve_backward_step(
     Re: float = 100.0,
     nx: int = 120,
     ny: int = 40,
@@ -438,10 +438,10 @@ def stufen_loesen(
     t_end: float = 30.0,
     dt: float = 0.01,
 ) -> tuple[SIMPLESolver, StufenErgebnis]:
-    """Solve backward‑facing step flow.
+    """Solve backward闁炽儲鍚卆cing step flow.
 
     The domain consists of a narrow inlet channel (height h) that
-    expands abruptly to a wider channel (height H = ER · h).
+    expands abruptly to a wider channel (height H = ER 鐠?h).
 
     Parameters
     ----------
@@ -471,7 +471,7 @@ def stufen_loesen(
 
     # Simplified: use a rectangular domain; the step is represented
     # by the boundary condition at the lower wall.
-    # A full treatment would need a non‑uniform mesh; here we use a
+    # A full treatment would need a non闁炽儲鍞筺iform mesh; here we use a
     # uniform mesh and identify the step location geometrically.
     mesh: Mesh2D = Mesh2D(nx, ny, lx=L_gesamt, ly=H)
 
@@ -503,9 +503,9 @@ def stufen_loesen(
     if wiederanlege_idx is None:
         # No reattachment found within domain
         laenge_num: float = L_nach
-        abweichung: float = 100.0
+        deviation: float = 100.0
     else:
-        # Linear interpolation for sub‑cell accuracy
+        # Linear interpolation for sub闁炽儲鍙緀ll accuracy
         x0: float = mesh.xc[i_step + wiederanlege_idx - 1]
         x1: float = mesh.xc[i_step + wiederanlege_idx]
         u0: float = u_wand[wiederanlege_idx - 1]
@@ -520,21 +520,21 @@ def stufen_loesen(
     # Find closest reference Re
     ref_schluessel: int = min(STUFEN_REFERENZ.keys(), key=lambda k: abs(k - Re))
     laenge_ref: float = STUFEN_REFERENZ[ref_schluessel]
-    abweichung = 100.0 * abs(laenge_num - laenge_ref) / (laenge_ref + 1.0e-30)
-    bestanden: bool = abweichung < 30.0
+    deviation = 100.0 * abs(laenge_num - laenge_ref) / (laenge_ref + 1.0e-30)
+    passed: bool = deviation < 30.0
 
     return solver, StufenErgebnis(
         Reynoldszahl=Re,
         wiederanlegelaenge_num=laenge_num,
         wiederanlegelaenge_ref=laenge_ref,
-        abweichung_prozent=abweichung,
-        bestanden=bestanden,
+        deviation_prozent=deviation,
+        passed=passed,
     )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Versuch D: Zylinderumströmung ────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Versuch D: Zylinderumstr閺嬫ung 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 @dataclass
 class ZylinderErgebnis:
@@ -543,10 +543,10 @@ class ZylinderErgebnis:
     widerstandsbeiwert: float
     auftriebsbeiwert_rms: float
     Strouhalzahl: float
-    bestanden: bool
+    passed: bool
 
 
-def zylinder_loesen(
+def solve_cylinder(
     Re: float = 40.0,
     nx: int = 100,
     ny: int = 80,
@@ -555,7 +555,7 @@ def zylinder_loesen(
 ) -> tuple[SIMPLESolver, ZylinderErgebnis]:
     """Solve flow around a circular cylinder.
 
-    Simplified model: the cylinder is represented by a no‑slip region
+    Simplified model: the cylinder is represented by a no闁炽儲鍞秎ip region
     in the centre of the domain.  Drag and lift coefficients are
     approximated from the surface pressure integration.
 
@@ -596,7 +596,7 @@ def zylinder_loesen(
     y_center: float = H / 2.0
     r_cylinder: float = D / 2.0
 
-    # Enforce no‑slip inside cylinder by directly setting velocity to zero
+    # Enforce no闁炽儲鍞秎ip inside cylinder by directly setting velocity to zero
     # inside the cylinder region after each step
     n_steps: int = int(t_end / dt)
 
@@ -613,7 +613,7 @@ def zylinder_loesen(
         solver.u.data[mask_zyl] = 0.0
         solver.v.data[mask_zyl] = 0.0
 
-        # Approximate force coefficients via near‑cylinder momentum balance
+        # Approximate force coefficients via near闁炽儲鍙緔linder momentum balance
         # (simplified: difference in velocity gradient across cylinder)
         cd: float = _naeherungs_cd(solver, x_center, y_center, r_cylinder, nu)
         cl: float = _naeherungs_cl(solver, x_center, y_center, r_cylinder, nu)
@@ -622,7 +622,7 @@ def zylinder_loesen(
             zeitreihe_cd.append(cd)
             zeitreihe_cl.append(cl)
 
-    mittlerer_cd: float = float(np.mean(zeitreihe_cd)) if zeitreihe_cd else 0.0
+    mean_cd: float = float(np.mean(zeitreihe_cd)) if zeitreihe_cd else 0.0
     cl_rms: float = float(np.std(zeitreihe_cl)) if zeitreihe_cl else 0.0
 
     # Strouhal number from lift frequency (if unsteady, Re > ~60)
@@ -631,22 +631,22 @@ def zylinder_loesen(
     # Reference values (Tritton 1959, Williamson 1996)
     if abs(Re - 40.0) < 1.0:
         cd_ref: float = 1.50
-        bestanden: bool = abs(mittlerer_cd - cd_ref) / cd_ref < 0.3
+        passed: bool = abs(mean_cd - cd_ref) / cd_ref < 0.3
     elif abs(Re - 200.0) < 1.0:
         cd_ref = 1.30
         st_ref: float = 0.196
-        bestanden = (abs(mittlerer_cd - cd_ref) / cd_ref < 0.3
+        passed = (abs(mean_cd - cd_ref) / cd_ref < 0.3
                      and abs(St - st_ref) / st_ref < 0.3)
     else:
         cd_ref = 0.0
-        bestanden = True
+        passed = True
 
     return solver, ZylinderErgebnis(
         Reynoldszahl=Re,
-        widerstandsbeiwert=mittlerer_cd,
+        widerstandsbeiwert=mean_cd,
         auftriebsbeiwert_rms=cl_rms,
         Strouhalzahl=St,
-        bestanden=bestanden,
+        passed=passed,
     )
 
 
@@ -674,7 +674,7 @@ def _naeherungs_cl(
 
     r_shell: float = r * 1.5
     maske: np.ndarray = ((X - x_c) ** 2 + (Y - y_c) ** 2 < r_shell ** 2)
-    # Asymmetric vorticity → lift
+    # Asymmetric vorticity 闁?lift
     oben: np.ndarray = (Y > y_c) & maske
     unten: np.ndarray = (Y < y_c) & maske
     omega_oben: float = float(np.mean(omega[oben])) if np.any(oben) else 0.0
@@ -688,7 +688,7 @@ def _berechne_Strouhal(
     D: float,
     U_inf: float,
 ) -> float:
-    """Estimate Strouhal number from lift‑coefficient time series.
+    """Estimate Strouhal number from lift闁炽儲鍙緊efficient time series.
 
     Uses FFT to find the dominant frequency.
 
@@ -701,12 +701,12 @@ def _berechne_Strouhal(
     D : float
         Cylinder diameter.
     U_inf : float
-        Free‑stream velocity.
+        Free闁炽儲鍞秚ream velocity.
 
     Returns
     -------
     float
-        Strouhal number St = f · D / U_inf.
+        Strouhal number St = f 鐠?D / U_inf.
     """
     if len(cl_zeitreihe) < 10:
         return 0.0
@@ -726,12 +726,12 @@ def _berechne_Strouhal(
     return St if St > 0.0 else 0.0
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Haupt-Routine: Alle Versuche ausführen ───────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Haupt-Routine: Alle Versuche ausf閻“ren 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 @dataclass
-class BenchmarkErgebnisse:
+class BenchmarkResults:
     """Sammelergebnisse aller Benchmarks."""
     cavity_ergebnisse: list[CavityErgebnis] = field(default_factory=list)
     poiseuille_ergebnis: PoiseuilleErgebnis | None = None
@@ -739,11 +739,11 @@ class BenchmarkErgebnisse:
     zylinder_ergebnisse: list[ZylinderErgebnis] = field(default_factory=list)
 
 
-def alle_benchmarks_ausfuehren(
+def run_all_benchmarks(
     cavity_reynoldszahlen: list[int] | None = None,
     stufen_reynoldszahlen: list[float] | None = None,
     zylinder_reynoldszahlen: list[float] | None = None,
-) -> BenchmarkErgebnisse:
+) -> BenchmarkResults:
     """Run all benchmark cases.
 
     Parameters
@@ -757,7 +757,7 @@ def alle_benchmarks_ausfuehren(
 
     Returns
     -------
-    BenchmarkErgebnisse with all results.
+    BenchmarkResults with all results.
     """
     if cavity_reynoldszahlen is None:
         cavity_reynoldszahlen = [100, 400, 1000]
@@ -766,10 +766,10 @@ def alle_benchmarks_ausfuehren(
     if zylinder_reynoldszahlen is None:
         zylinder_reynoldszahlen = [40.0]
 
-    ergebnisse: BenchmarkErgebnisse = BenchmarkErgebnisse()
+    ergebnisse: BenchmarkResults = BenchmarkResults()
 
-    # ── Versuch A: Cavity ──
-    print("  [Benchmark] Versuch A — Lid-driven Cavity")
+    # 闁冲厜鍋撻柍鍏夊亾 Versuch A: Cavity 闁冲厜鍋撻柍鍏夊亾
+    print("  [Benchmark] Versuch A 闁?Lid-driven Cavity")
     for Re in cavity_reynoldszahlen:
         ref: CavityReferenz | None = None
         for r in CAVITY_REFERENZEN:
@@ -779,42 +779,42 @@ def alle_benchmarks_ausfuehren(
         if ref is None:
             continue
 
-        solver = cavity_loesen(Re)
+        solver = solve_cavity(Re)
         erg = cavity_auswerten(solver, ref)
         ergebnisse.cavity_ergebnisse.append(erg)
-        status: str = "✓" if erg.bestanden else "✗"
+        status: str = "闁? if erg.passed else "闁?
         print(f"    {status} Re = {Re:4d}  "
-              f"|u|_mean = {erg.fehler_u_mittel:.4f}  "
-              f"|v|_mean = {erg.fehler_v_mittel:.4f}")
+              f"|u|_mean = {erg.error_u_mean:.4f}  "
+              f"|v|_mean = {erg.error_v_mean:.4f}")
 
-    # ── Versuch B: Poiseuille ──
-    print("  [Benchmark] Versuch B — Poiseuille-Strömung")
-    _, p_erg = poiseuille_loesen()
+    # 闁冲厜鍋撻柍鍏夊亾 Versuch B: Poiseuille 闁冲厜鍋撻柍鍏夊亾
+    print("  [Benchmark] Versuch B 闁?Poiseuille-Str閺嬫ung")
+    _, p_erg = solve_poiseuille()
     ergebnisse.poiseuille_ergebnis = p_erg
-    status = "✓" if p_erg.bestanden else "✗"
-    print(f"    {status} L1 = {p_erg.L1_fehler:.2e}  "
-          f"L2 = {p_erg.L2_fehler:.2e}  "
-          f"L∞ = {p_erg.Linf_fehler:.2e}")
+    status = "闁? if p_erg.passed else "闁?
+    print(f"    {status} L1 = {p_erg.L1_error:.2e}  "
+          f"L2 = {p_erg.L2_error:.2e}  "
+          f"L闁?= {p_erg.Linf_error:.2e}")
     print(f"      U_max (numerisch) = {p_erg.maximalgeschwindigkeit_num:.4f}")
     print(f"      U_max (exakt)     = {p_erg.maximalgeschwindigkeit_exakt:.4f}")
 
-    # ── Versuch C: Stufe ──
-    print("  [Benchmark] Versuch C — Rückwärtsstufe")
+    # 闁冲厜鍋撻柍鍏夊亾 Versuch C: Stufe 闁冲厜鍋撻柍鍏夊亾
+    print("  [Benchmark] Versuch C 闁?R閻々kw閻╃灗tsstufe")
     for Re in stufen_reynoldszahlen:
-        _, s_erg = stufen_loesen(Re=Re)
+        _, s_erg = solve_backward_step(Re=Re)
         ergebnisse.stufen_ergebnisse.append(s_erg)
-        status = "✓" if s_erg.bestanden else "✗"
+        status = "闁? if s_erg.passed else "闁?
         print(f"    {status} Re = {Re:4.0f}  "
               f"x_r (num) = {s_erg.wiederanlegelaenge_num:.2f}h  "
               f"x_r (ref) = {s_erg.wiederanlegelaenge_ref:.1f}h  "
-              f"Δ = {s_erg.abweichung_prozent:.1f}%")
+              f"閾?= {s_erg.deviation_prozent:.1f}%")
 
-    # ── Versuch D: Zylinder ──
-    print("  [Benchmark] Versuch D — Zylinderumströmung")
+    # 闁冲厜鍋撻柍鍏夊亾 Versuch D: Zylinder 闁冲厜鍋撻柍鍏夊亾
+    print("  [Benchmark] Versuch D 闁?Zylinderumstr閺嬫ung")
     for Re in zylinder_reynoldszahlen:
-        _, z_erg = zylinder_loesen(Re=Re)
+        _, z_erg = solve_cylinder(Re=Re)
         ergebnisse.zylinder_ergebnisse.append(z_erg)
-        status = "✓" if z_erg.bestanden else "✗"
+        status = "闁? if z_erg.passed else "闁?
         print(f"    {status} Re = {Re:4.0f}  "
               f"C_D = {z_erg.widerstandsbeiwert:.3f}  "
               f"C_L(RMS) = {z_erg.auftriebsbeiwert_rms:.3f}  "
@@ -823,42 +823,42 @@ def alle_benchmarks_ausfuehren(
     return ergebnisse
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Hauptprogramm ────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Hauptprogramm 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 def main() -> int:
     """Run the full benchmark suite and print a summary."""
     print("=" * 72)
-    print("  CFD-Solver — Benchmark-Suite (Verifizierung)")
-    print("  TU München, Lehrstuhl für Numerische Strömungsmechanik")
+    print("  CFD-Solver 闁?Benchmark-Suite (Verifizierung)")
+    print("  TU M閻《chen, Lehrstuhl f閻『 Numerische Str閺嬫ungsmechanik")
     print("=" * 72)
 
-    ergebnisse: BenchmarkErgebnisse = alle_benchmarks_ausfuehren()
+    ergebnisse: BenchmarkResults = run_all_benchmarks()
 
     print()
     print("=" * 72)
     print("  Zusammenfassung")
     print("=" * 72)
 
-    alle_bestanden: list[bool] = []
+    all_passed: list[bool] = []
     for c in ergebnisse.cavity_ergebnisse:
-        alle_bestanden.append(c.bestanden)
+        all_passed.append(c.passed)
     if ergebnisse.poiseuille_ergebnis is not None:
-        alle_bestanden.append(ergebnisse.poiseuille_ergebnis.bestanden)
+        all_passed.append(ergebnisse.poiseuille_ergebnis.passed)
     for s in ergebnisse.stufen_ergebnisse:
-        alle_bestanden.append(s.bestanden)
+        all_passed.append(s.passed)
     for z in ergebnisse.zylinder_ergebnisse:
-        alle_bestanden.append(z.bestanden)
+        all_passed.append(z.passed)
 
-    total: int = len(alle_bestanden)
-    passed: int = sum(alle_bestanden)
+    total: int = len(all_passed)
+    passed: int = sum(all_passed)
 
-    print(f"  Bestanden: {passed} / {total}")
+    print(f"  passed: {passed} / {total}")
     if passed == total:
-        print("  ✓ ALLE BENCHMARKS BESTANDEN")
+        print("  闁?ALL BENCHMARKS PASSED")
     else:
-        print(f"  ✗ {total - passed} Benchmark(s) nicht bestanden")
+        print(f"  闁?{total - passed} Benchmark(s) failed")
     print()
 
     return 0 if passed == total else 1

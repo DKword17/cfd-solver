@@ -8,26 +8,26 @@ Navier-Stokes solver using the Grid Convergence Index (GCI)
 methodology of Roache (1998).
 
 The study computes solutions across 5 grid levels with a constant
-refinement factor r = √2 ≈ 1.414.  For each grid level the
+refinement factor r = 闁? 闁?1.414.  For each grid level the
 discretisation error is quantified, the apparent convergence order
 is estimated, and the asymptotic range is verified.
 
 Method (Roache 1998)
 --------------------
 For a triplet of grids (1 = fine, 2 = medium, 3 = coarse) with
-refinement factor r = h₂/h₁ = h₃/h₂:
+refinement factor r = h闁?h闁?= h闁?h闁?
 
-    p = ln((f₃ - f₂) / (f₂ - f₁)) / ln(r)
+    p = ln((f闁?- f闁? / (f闁?- f闁?) / ln(r)
 
-    f_{h=0} = f₁ + (f₁ - f₂) / (r^p - 1)
+    f_{h=0} = f闁?+ (f闁?- f闁? / (r^p - 1)
 
-    GCI_{fine} = F_s · |(f₁ - f₂) / f₁| / (r^p - 1)
+    GCI_{fine} = F_s 鐠?|(f闁?- f闁? / f闁逞傜盃 / (r^p - 1)
 
 where F_s = 1.25 (safety factor for 3-grid comparisons).
 
 Asymptotic range is confirmed when:
 
-    GCI_{23} / (r^p · GCI_{12}) ≈ 1.0
+    GCI_{23} / (r^p 鐠?GCI_{12}) 闁?1.0
 
 References
 ----------
@@ -38,7 +38,7 @@ References
   *ASME J. Fluids Eng.*, 130(7):078001.
 
 Author: Heinrich Vogel
-        TU München, Lehrstuhl für Numerische Strömungsmechanik
+        TU M閻《chen, Lehrstuhl f閻『 Numerische Str閺嬫ungsmechanik
 Date:   2026-07-27
 """
 
@@ -59,60 +59,60 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 from navier_stokes import Boundary2D, BoundaryCondition, Mesh2D, SIMPLESolver
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Konstanten ────────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Konstanten 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-RHO: Final[float] = 1.0                        # Dichte [kg/m³]
-NU: Final[float] = 1.0e-3                      # Viskosität [m²/s]
-REFINEMENT_FACTOR: Final[float] = 2.0 ** 0.5   # r = √2 ≈ 1.414
-ANZAHL_GITTER: Final[int] = 5                  # Anzahl Gitterstufen
+RHO: Final[float] = 1.0                        # Dichte [kg/m妞翠箽
+NU: Final[float] = 1.0e-3                      # Viskosit閻╃灜 [m閾?s]
+REFINEMENT_FACTOR: Final[float] = 2.0 ** 0.5   # r = 闁? 闁?1.414
+NUM_GRIDS: Final[int] = 5                  # refinements
 F_SICHERHEIT: Final[float] = 1.25              # Sicherheitsfaktor F_s
-T_END_KONV: Final[float] = 5.0                 # Endzeit pro Gitter [s]
+T_END_CONV: Final[float] = 5.0                 # End time per grid [s]
 DT_KONV: Final[float] = 0.01                   # Zeitschritt [s]
 
-# Basisgitter: gröbstes Gitter
+# Base grid: coarsest level
 NX_BASIS: Final[int] = 8
 NY_BASIS: Final[int] = 8
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Dataclasses ──────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Dataclasses 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 @dataclass
-class Gitterebene:
-    """Eine einzelne Gitterebene der Verfeinerungsstudie.
+class GridLevel:
+    """Eine einzelne GridLevel der Verfeinerungsstudie.
 
     Attributes
     ----------
     stufe : int
-        Level index (1 = finest, ANZAHL_GITTER = coarsest).
+        Level index (1 = finest, NUM_GRIDS = coarsest).
     nx : int
         Number of cells in x.
     ny : int
         Number of cells in y.
-    gitterweite : float
-        Characteristic cell size h = sqrt(1/(nx·ny)).
+    grid_spacing : float
+        Characteristic cell size h = sqrt(1/(nx鐠虹棴y)).
     loesung : float
-        Solution value (e.g. max u‑velocity at centreline).
+        Solution value (e.g. max u闁炽儲鍞篹locity at centreline).
     """
     stufe: int
     nx: int
     ny: int
-    gitterweite: float
+    grid_spacing: float
     loesung: float
 
 
 @dataclass
 class GCIErgebnis:
-    """GCI‑Auswertung für ein Triplett von Gittern.
+    """GCI闁炽儲鍘渦swertung f閻『 ein Triplett von Gittern.
 
     Attributes
     ----------
-    stufe_fein : int
+    fine_level : int
         Level of the finest grid in the triplet.
-    konvergenzordnung_p : float
+    convergence_order_p : float
         Apparent convergence order p.
     extrapolierter_wert : float
         Richardson extrapolation f_{h=0}.
@@ -121,10 +121,10 @@ class GCIErgebnis:
     GCI_grob : float
         GCI on the coarse grid (fractional).
     asymptotischer_index : float
-        GCI_23 / (r^p · GCI_12).  ≈ 1.0 confirms asymptotic range.
+        GCI_23 / (r^p 鐠?GCI_12).  闁?1.0 confirms asymptotic range.
     """
-    stufe_fein: int
-    konvergenzordnung_p: float
+    fine_level: int
+    convergence_order_p: float
     extrapolierter_wert: float
     GCI_fein: float
     GCI_grob: float
@@ -132,12 +132,12 @@ class GCIErgebnis:
 
 
 @dataclass
-class KonvergenzStudie:
+class ConvergenceStudy:
     """Complete mesh convergence study results.
 
     Attributes
     ----------
-    gitterebenen : list[Gitterebene]
+    GridLeveln : list[GridLevel]
         Solutions on each grid level.
     gci_ergebnisse : list[GCIErgebnis]
         GCI results for each consecutive triplet.
@@ -148,23 +148,23 @@ class KonvergenzStudie:
     im_asymptotischen_bereich : bool
         Whether asymptotic range is confirmed.
     """
-    gitterebenen: list[Gitterebene] = field(default_factory=list)
+    GridLeveln: list[GridLevel] = field(default_factory=list)
     gci_ergebnisse: list[GCIErgebnis] = field(default_factory=list)
     intervall_unter: float = 0.0
     intervall_ober: float = 0.0
     im_asymptotischen_bereich: bool = False
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Problem-definierende Funktion ────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Problem-definierende Funktion 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-def _loese_auf_gitter(nx: int, ny: int, Re: float = 100.0,
-                      t_end: float = T_END_KONV,
+def _solve_on_grid(nx: int, ny: int, Re: float = 100.0,
+                      t_end: float = T_END_CONV,
                       dt: float = DT_KONV) -> float:
     """Solve a reference problem on a given grid.
 
-    Returns a scalar quantity of interest (here: peak u‑velocity
+    Returns a scalar quantity of interest (here: peak u闁炽儲鍞篹locity
     along the cavity vertical centreline at x = 0.5).  This quantity
     is tracked across grid levels for the GCI study.
 
@@ -182,7 +182,7 @@ def _loese_auf_gitter(nx: int, ny: int, Re: float = 100.0,
     Returns
     -------
     float
-        Peak u‑velocity on centreline (quantity of interest).
+        Peak u闁炽儲鍞篹locity on centreline (quantity of interest).
     """
     nu: float = 1.0 / Re
     mesh: Mesh2D = Mesh2D(nx, ny, lx=1.0, ly=1.0)
@@ -206,26 +206,26 @@ def _loese_auf_gitter(nx: int, ny: int, Re: float = 100.0,
     return float(np.max(np.abs(u_zentrum)))
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Gittererzeugung ──────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Grid creation 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-def erzeuge_gitterebenen(
-    anzahl: int = ANZAHL_GITTER,
+def create_grid_levels(
+    count: int = NUM_GRIDS,
     nx_basis: int = NX_BASIS,
     ny_basis: int = NY_BASIS,
     Re: float = 100.0,
-) -> list[Gitterebene]:
+) -> list[GridLevel]:
     """Generate and solve on all grid levels.
 
-    Grid i (0 = coarsest) has  nx = nx_basis · r^{i}
-    and ny = ny_basis · r^{i}, where r = REFINEMENT_FACTOR.
+    Grid i (0 = coarsest) has  nx = nx_basis 鐠?r^{i}
+    and ny = ny_basis 鐠?r^{i}, where r = REFINEMENT_FACTOR.
 
     The finest grid (stufe = 1) has the largest nx, ny.
 
     Parameters
     ----------
-    anzahl : int
+    count : int
         Number of grid levels (default 5).
     nx_basis, ny_basis : int
         Coarsest grid resolution.
@@ -234,35 +234,35 @@ def erzeuge_gitterebenen(
 
     Returns
     -------
-    list[Gitterebene]
-        Solutions on each grid level, sorted finest → coarsest.
+    list[GridLevel]
+        Solutions on each grid level, sorted finest 闁?coarsest.
     """
-    ebenen: list[Gitterebene] = []
+    levels: list[GridLevel] = []
 
-    for stufe in range(anzahl):
-        idx: int = anzahl - 1 - stufe  # 0 = finest, anzahl-1 = coarsest
+    for stufe in range(count):
+        idx: int = count - 1 - stufe  # 0 = finest, count-1 = coarsest
         nx: int = int(round(nx_basis * (REFINEMENT_FACTOR ** idx)))
         ny: int = int(round(ny_basis * (REFINEMENT_FACTOR ** idx)))
         nx = max(nx, 4)
         ny = max(ny, 4)
 
-        gitterweite: float = np.sqrt(1.0 / (nx * ny))
-        loesung: float = _loese_auf_gitter(nx, ny, Re=Re)
+        grid_spacing: float = np.sqrt(1.0 / (nx * ny))
+        loesung: float = _solve_on_grid(nx, ny, Re=Re)
 
-        ebenen.append(Gitterebene(
+        levels.append(GridLevel(
             stufe=stufe + 1,
             nx=nx,
             ny=ny,
-            gitterweite=gitterweite,
+            grid_spacing=grid_spacing,
             loesung=loesung,
         ))
 
-    return ebenen
+    return levels
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── GCI-Berechnung (Roache 1998) ─────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?GCI-Berechnung (Roache 1998) 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 def berechne_gci(
     f1: float, f2: float, f3: float,
@@ -282,7 +282,7 @@ def berechne_gci(
     r : float
         Refinement factor.
     Fs : float
-        Safety factor (1.25 for 3‑grid studies).
+        Safety factor (1.25 for 3闁炽儲鍚噐id studies).
 
     Returns
     -------
@@ -294,8 +294,8 @@ def berechne_gci(
     # Apparent order p
     if abs(eps12) < 1.0e-30 or abs(eps23) < 1.0e-30:
         return GCIErgebnis(
-            stufe_fein=0,
-            konvergenzordnung_p=0.0,
+            fine_level=0,
+            convergence_order_p=0.0,
             extrapolierter_wert=f1,
             GCI_fein=0.0,
             GCI_grob=0.0,
@@ -322,8 +322,8 @@ def berechne_gci(
     asym_index: float = GCI_coarse / (rp * GCI_fine) if GCI_fine > 1.0e-15 else -1.0
 
     return GCIErgebnis(
-        stufe_fein=1,
-        konvergenzordnung_p=p,
+        fine_level=1,
+        convergence_order_p=p,
         extrapolierter_wert=f_exact,
         GCI_fein=GCI_fine,
         GCI_grob=GCI_coarse,
@@ -331,47 +331,47 @@ def berechne_gci(
     )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Hauptstudie ──────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Hauptstudie 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-def fuehre_Gitterkonvergenzstudie_durch(
+def run_grid_convergence_study(
     Re: float = 100.0,
-    anzahl_gitter: int = ANZAHL_GITTER,
-) -> KonvergenzStudie:
+    NUM_GRIDS: int = NUM_GRIDS,
+) -> ConvergenceStudy:
     """Run a complete mesh convergence study.
 
     Parameters
     ----------
     Re : float
         Reynoldszahl for the cavity flow.
-    anzahl_gitter : int
+    NUM_GRIDS : int
         Number of grid levels (default 5).
 
     Returns
     -------
-    KonvergenzStudie
+    ConvergenceStudy
         Full results with GCI, asymptotic range check, and
         95 % Konfidenzintervall.
     """
-    ebenen: list[Gitterebene] = erzeuge_gitterebenen(
-        anzahl=anzahl_gitter, Re=Re,
+    levels: list[GridLevel] = create_grid_levels(
+        count=NUM_GRIDS, Re=Re,
     )
 
     gci_liste: list[GCIErgebnis] = []
-    for i in range(len(ebenen) - 2):
+    for i in range(len(levels) - 2):
         gci = berechne_gci(
-            f1=ebenen[i].loesung,
-            f2=ebenen[i + 1].loesung,
-            f3=ebenen[i + 2].loesung,
+            f1=levels[i].loesung,
+            f2=levels[i + 1].loesung,
+            f3=levels[i + 2].loesung,
         )
-        gci.stufe_fein = ebenen[i].stufe
+        gci.fine_level = levels[i].stufe
         gci_liste.append(gci)
 
-    # Best estimate from finest‑grid triplet
+    # Best estimate from finest闁炽儲鍚噐id triplet
     finest_gci: GCIErgebnis = gci_liste[0] if gci_liste else GCIErgebnis(
-        stufe_fein=0, konvergenzordnung_p=0.0,
-        extrapolierter_wert=ebenen[0].loesung if ebenen else 0.0,
+        fine_level=0, convergence_order_p=0.0,
+        extrapolierter_wert=levels[0].loesung if levels else 0.0,
         GCI_fein=0.0, GCI_grob=0.0, asymptotischer_index=-1.0,
     )
 
@@ -388,8 +388,8 @@ def fuehre_Gitterkonvergenzstudie_durch(
             im_asymptotischen = True
             break
 
-    return KonvergenzStudie(
-        gitterebenen=ebenen,
+    return ConvergenceStudy(
+        GridLeveln=levels,
         gci_ergebnisse=gci_liste,
         intervall_unter=intervall_unter,
         intervall_ober=intervall_ober,
@@ -397,16 +397,16 @@ def fuehre_Gitterkonvergenzstudie_durch(
     )
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Bericht ──────────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Bericht 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
-def drucke_GCI_Bericht(studie: KonvergenzStudie) -> str:
+def print_GCI_report(studie: ConvergenceStudy) -> str:
     """Format the GCI study as a printable report.
 
     Parameters
     ----------
-    studie : KonvergenzStudie
+    studie : ConvergenceStudy
         Completed convergence study.
 
     Returns
@@ -414,29 +414,29 @@ def drucke_GCI_Bericht(studie: KonvergenzStudie) -> str:
     str
         Formatted report.
     """
-    linie: str = "─" * 72
+    linie: str = "闁冲厜鍋? * 72
     bericht: str = f"\n{linie}\n"
-    bericht += "  Gitterkonvergenzstudie (GCI — Roache 1998)\n"
+    bericht += "  Grid convergence study (GCI 闁?Roache 1998)\n"
     bericht += f"{linie}\n"
     bericht += (
         f"  {'Stufe':>5s}  {'nx':>4s}  {'ny':>4s}  "
-        f"{'h':>10s}  {'Lösung':>12s}\n"
+        f"{'h':>10s}  {'L閺嬫ung':>12s}\n"
     )
     bericht += f"{linie}\n"
 
-    for ebene in studie.gitterebenen:
+    for level in studie.GridLeveln:
         bericht += (
-            f"  {ebene.stufe:5d}  {ebene.nx:4d}  {ebene.ny:4d}  "
-            f"{ebene.gitterweite:10.3e}  {ebene.loesung:12.6e}\n"
+            f"  {level.stufe:5d}  {level.nx:4d}  {level.ny:4d}  "
+            f"{level.grid_spacing:10.3e}  {level.loesung:12.6e}\n"
         )
 
     bericht += f"{linie}\n"
-    bericht += "  GCI‑Auswertung (Tripletts):\n"
+    bericht += "  GCI闁炽儲鍘渦swertung (Tripletts):\n"
     bericht += f"{linie}\n"
 
     for gci in studie.gci_ergebnisse:
         bericht += (
-            f"  Stufe {gci.stufe_fein} (fein):  p = {gci.konvergenzordnung_p:.4f}"
+            f"  Stufe {gci.fine_level} (fein):  p = {gci.convergence_order_p:.4f}"
             f"  f_extrap = {gci.extrapolierter_wert:.6e}\n"
             f"    GCI_fine = {gci.GCI_fein * 100.0:.3f}%  "
             f"GCI_coarse = {gci.GCI_grob * 100.0:.3f}%  "
@@ -450,50 +450,50 @@ def drucke_GCI_Bericht(studie: KonvergenzStudie) -> str:
     )
 
     if studie.im_asymptotischen_bereich:
-        bericht += "  ✓ Asymptotischer Bereich erreicht (0.8 ≤ GCI_23/(r^p·GCI_12) ≤ 1.2)\n"
+        bericht += "  闁?Asymptotischer Bereich erreicht (0.8 闁?GCI_23/(r^p鐠虹枔CI_12) 闁?1.2)\n"
     else:
-        bericht += "  ⚠ Asymptotischer Bereich NOCH NICHT erreicht\n"
+        bericht += "  闁?Asymptotischer Bereich NOCH NICHT erreicht\n"
 
     bericht += f"{linie}\n"
     return bericht
 
 
-# ═══════════════════════════════════════════════════════════════════════
-# ─── Hauptprogramm ────────────────────────────────────────────────────
-# ═══════════════════════════════════════════════════════════════════════
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
+# 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋?Hauptprogramm 闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾闁冲厜鍋撻柍鍏夊亾
+# 闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩￠幇銊︽珳闁崇儤鍔忛弲鏌ュ煛閹般劍娅滈柍鐑樺姀閺呮煡鍩?
 
 def main() -> int:
     """Run the mesh convergence study and print the GCI report."""
     print("=" * 72)
-    print("  Systematische Gitterkonvergenzstudie")
-    print("  TU München, Lehrstuhl für Numerische Strömungsmechanik")
+    print("  Systematische Grid convergence study")
+    print("  TU M閻《chen, Lehrstuhl f閻『 Numerische Str閺嬫ungsmechanik")
     print("=" * 72)
     print(f"  Refinement factor r = {REFINEMENT_FACTOR:.4f}")
-    print(f"  Grid levels         = {ANZAHL_GITTER}")
-    print(f"  ν                   = {NU:.1e}  m²/s")
-    print(f"  ρ                   = {RHO:.1f}  kg/m³")
-    print(f"  T_end               = {T_END_KONV:.1f}  s")
+    print(f"  Grid levels         = {NUM_GRIDS}")
+    print(f"  鐠?                  = {NU:.1e}  m閾?s")
+    print(f"  閿?                  = {RHO:.1f}  kg/m妞?)
+    print(f"  T_end               = {T_END_CONV:.1f}  s")
     print()
 
-    studie: KonvergenzStudie = fuehre_Gitterkonvergenzstudie_durch(Re=100.0)
-    bericht: str = drucke_GCI_Bericht(studie)
+    studie: ConvergenceStudy = run_grid_convergence_study(Re=100.0)
+    bericht: str = print_GCI_report(studie)
     print(bericht)
 
     # Acceptance criterion: asymptotic range confirmed or GCI < 5 %
     finest_gci: float = (
         studie.gci_ergebnisse[0].GCI_fein if studie.gci_ergebnisse else 1.0
     )
-    bestanden: bool = (
+    PASSED: bool = (
         studie.im_asymptotischen_bereich or finest_gci < 0.05
     )
 
-    if bestanden:
-        print("  ✓ BESTANDEN — Gitterkonvergenz nachgewiesen")
+    if PASSED:
+        print("  闁?PASSED 闁?Grid convergence demonstrated")
     else:
-        print("  ✗ NICHT BESTANDEN — Gitterkonvergenz unzureichend")
+        print("  闁?FAILED 閳?insufficient grid convergence")
     print()
 
-    return 0 if bestanden else 1
+    return 0 if PASSED else 1
 
 
 if __name__ == "__main__":

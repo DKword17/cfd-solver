@@ -137,7 +137,7 @@ def benchmark():
     print("  Benchmark: GPU Poisson")
     print("=" * 60)
     from cuda_bridge import CUDABridge
-    CUDABridge.benchmark_poisson([64, 128, 256, 512])
+    CUDABridge.benchmark([64, 128, 256, 512])
 
 
 def main():

@@ -130,4 +130,100 @@ class CUDAGradient:
     def green_gauss(self, fx, fy):
         gx = cp.empty((self.ny, self.nx), dtype=cp.float32)
         gy = cp.empty((self.ny, self.nx), dtype=cp.float32)
-        self._gg(self._g2d, self._
+        self._gg(self._g2d, self._b2d,
+                 (fx, fy, gx, gy, self.nx, self.ny,
+                  cp.float32(self.inv_dx), cp.float32(self.inv_dy),
+                  cp.float32(1.0)))
+        return gx, gy
+
+    def divergence(self, u, v):
+        d = cp.zeros((self.ny, self.nx), dtype=cp.float32)
+        self._div(self._gi, self._bi,
+                  (u, v, d, self.nx, self.ny,
+                   cp.float32(self.inv_dx), cp.float32(self.inv_dy)))
+        return d
+
+    def vorticity(self, u, v):
+        o = cp.zeros((self.ny, self.nx), dtype=cp.float32)
+        self._vort(self._gi, self._bi,
+                   (u, v, o, self.nx, self.ny,
+                    cp.float32(self.inv_dx), cp.float32(self.inv_dy)))
+        return o
+
+
+class CUDALimiter:
+    MINMOD, VAN_LEER, SUPERBEE = 0, 1, 2
+
+    def __init__(self, nx, ny):
+        self.nx, self.ny = nx, ny
+        mod = cp.RawModule(code=_load_cu("limiter.cu"))
+        self._x, self._y, self._v = (
+            mod.get_function("_kernel_tvd_face_x"),
+            mod.get_function("_kernel_tvd_face_y"),
+            mod.get_function("_kernel_limiter_value"),
+        )
+        self._gx, self._bx = _grid_2d(nx - 1, ny)
+        self._gy, self._by = _grid_2d(nx, ny - 1)
+
+    def apply_x(self, phi, lt=MINMOD):
+        f = cp.empty((self.ny, self.nx + 1), dtype=cp.float32)
+        self._x(self._gx, self._bx, (phi, f, self.nx, self.ny, lt))
+        return f
+
+    def apply_y(self, phi, lt=MINMOD):
+        f = cp.empty((self.ny + 1, self.nx), dtype=cp.float32)
+        self._y(self._gy, self._by, (phi, f, self.nx, self.ny, lt))
+        return f
+
+
+class CUDABridge:
+    """统一的 GPU 加速器桥接层，封装所有 CUDA 模块。"""
+
+    def __init__(self, nx, ny, dx, dy, dt=0.01, rho=1.0, device=0):
+        cp.cuda.Device(device).use()
+        self.poisson = CUDAPoissonSolver(nx, ny, dx, dy, dt, rho)
+        self.interp = CUDAFaceInterp(nx, ny)
+        self.gradient = CUDAGradient(nx, ny, dx, dy)
+        self.limiter = CUDALimiter(nx, ny)
+        self._warmup()
+
+    def _warmup(self):
+        d = cp.zeros((self.poisson.ny, self.poisson.nx), dtype=cp.float32)
+        self.gradient.divergence(d, d)
+        cp.cuda.Stream.null.synchronize()
+
+    def to_gpu(self, a):
+        return cp.asarray(a, dtype=cp.float32)
+
+    def to_cpu(self, a):
+        return cp.asnumpy(a)
+
+    @staticmethod
+    def benchmark(grids=None):
+        """Poisson 求解器性能基准测试。"""
+        if grids is None:
+            grids = [64, 128, 256, 512]
+        print(f"{'Grid':>8s}  {'Time(ms)':>10s}  {'Cells/s':>12s}  {'Res':>10s}")
+        print("-" * 44)
+        for n in grids:
+            dx = dy = 1.0 / n
+            s = CUDAPoissonSolver(n, n, dx, dy)
+            r = cp.random.randn(n, n).astype(cp.float32)
+            p = cp.zeros((n, n), dtype=cp.float32)
+            s.solve(r, p, 10, 0.0)
+            cp.cuda.Stream.null.synchronize()
+            e1 = cp.cuda.Event()
+            e2 = cp.cuda.Event()
+            e1.record()
+            p_, res = s.solve(r, p, 200, 0.0)
+            e2.record()
+            e2.synchronize()
+            t = cp.cuda.get_elapsed_time(e1, e2)
+            cps = (n * n * 200) / (t * 1e-3)
+            print(f"{n:4d}x{n:<4d}  {t:8.1f}ms  {cps:12.1e}  {res:10.2e}")
+
+
+if __name__ == "__main__":
+    gpu_name = cp.cuda.runtime.getDeviceProperties(0)['name'].decode()
+    print(f"GPU: {gpu_name}")
+    CUDABridge.benchmark([64, 128, 256, 512])
